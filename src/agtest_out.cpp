@@ -1,5 +1,5 @@
 /*
-  dies ist ein test für AppGen
+  this is a test for AppGen
 */
 
 #include <cstdlib>
@@ -19,34 +19,32 @@ bool verbose = false;
 using namespace std;
 
 /*AppGen
-  %%  Beschreibung des Programmes:
-  prog: Testprogramm für AppGen
+  %%  description of program
+  prog: simple test for AppGen
 
-  %% Beschreibung Parameter
-  % symbolischerName, Art, Typ,   Variablenname, Erklärung, Default-Wert
-  para: quelle, required, string, source, Quelldatei, nothing
-  para2: Dies ist eine nähere Erklärung zum Parameter quelle
-  para2: Dies ist noch eine Erklärung zum Parameter quelle
-  para2: Dies ist die letzte Erklärung zum Parameter quelle
-  %  para: worte, optional, list, worte, Bilddateien,
-  para: ziel,   optional, string, dest, Zieldatei, nothing
-  para: dateien, optional, filelist, files, Bilddateien,
+  %% description of parameters
+  % name, kind, c++ type , name of variable, description, default
+  para: source, required, string, source, source filename, ""
+  para2: this is a description of source (for help)
+  para2: this is another description of source (for help)
+  para: target, optional, string, target, target file name, ""
+  para: file, optional, filelist, files, additional file[s],
 
-  %% Beschreibung der Optionen
-  % kurz-Option, lang-Option, Typ, Variablenname, Erklärung, Default-Wert
-  opt: h, help,   usage,   ,    Hilfe
-  opt: H, longhelp,   Usage,   , Ausführliche  Hilfe
-: Dies ist ein Programm, welches nur zum Testen des Programmes
-: AppGen dient. Es erfüllt sonst quasi keinen Zweck.
-: üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü
-: Bitte teste ganz genau!
-  opt: x, xsize,  int,     xsize,    Bildgröße X,  800
-  opt2: Dies ist eine Erklärung zu xsize
-  opt: y, ysize,  int,      ysize,    Bildgröße Y,  600
-  opt: c, char, char, character, Ein Zeichen, 'b'
-  opt: v, verbose,  Void,   verbose,  Ausführliche Meldungen,  false
-  opt: o, output,  string,  ofn,  Ausgabe-Datei, out.txt
-  opt: f, factor, double,   fac,  Faktor, 3.14
+  %% description of options
+  % short option, long option, type, name of variable, description, default
+  opt: h, help,   usage,   ,    Help
+  opt: H, longhelp,   Usage,   ,  Verbose help
+: This is arbitrary text which is written, if
+: the program is called with option '-H'
+: Aller Anfang ist schwer
+: test test test test
+  opt: x, xsize,  int,     xsize,    Size X,  800
+  opt2: More about size
+  opt: y, ysize,  int,     ysize,    Size Y,  600
+  opt: c, char, char, character, one character, 'b'
+  opt: v, verbose,  Void,   verbose,  Be verbose,  false
+  opt: o, output,  string,  ofn,  output filename, out.txt
+  opt: f, factor, double,   fac,  factor, 3.14
 AppGen*/
 
 /*AppGen:Main*/
@@ -54,34 +52,33 @@ string ag_programName;
 
 void usage()
 {
-  cout << ag_programName << " - Testprogramm für AppGen" << endl;
+  cout << ag_programName << " - simple test for AppGen" << endl;
   cout << "Usage:" << endl;
-  cout << ag_programName << " [<options>] quelle [ziel] [dateien] " << endl;
-  cout << "  quelle  - Quelldatei" << endl;
-  cout << "            Dies ist eine nähere Erklärung zum Parameter quelle" << endl;
-  cout << "            Dies ist noch eine Erklärung zum Parameter quelle" << endl;
-  cout << "            Dies ist die letzte Erklärung zum Parameter quelle" << endl;
-  cout << "  ziel    - Zieldatei (optional, default:\"nothing\")" << endl;
-  cout << "  dateien - Bilddateien (optional, default:)" << endl;
+  cout << ag_programName << " [<options>] source [target] [file] " << endl;
+  cout << "  source - source filename" << endl;
+  cout << "           this is a description of source (for help)" << endl;
+  cout << "           this is another description of source (for help)" << endl;
+  cout << "  target - target file name (optional, default:\"\")" << endl;
+  cout << "  file   - additional file[s] (optional, default:)" << endl;
   cout << "Options:" << endl;
-  cout << "  -h --help      Hilfe" << endl;
-  cout << "  -H --longhelp  Ausführliche  Hilfe" << endl;
-  cout << "  -x --xsize     Bildgröße X (default: 800)" << endl;
-  cout << "                 Dies ist eine Erklärung zu xsize" << endl;
-  cout << "  -y --ysize     Bildgröße Y (default: 600)" << endl;
-  cout << "  -c --char      Ein Zeichen (default: 'b')" << endl;
-  cout << "  -v --verbose   Ausführliche Meldungen (default: false)" << endl;
-  cout << "  -o --output    Ausgabe-Datei (default: \"out.txt\")" << endl;
-  cout << "  -f --factor    Faktor (default: 3.14)" << endl;
+  cout << "  -h --help      Help" << endl;
+  cout << "  -H --longhelp  Verbose help" << endl;
+  cout << "  -x --xsize     Size X (default: 800)" << endl;
+  cout << "                 More about size" << endl;
+  cout << "  -y --ysize     Size Y (default: 600)" << endl;
+  cout << "  -c --char      one character (default: 'b')" << endl;
+  cout << "  -v --verbose   Be verbose (default: false)" << endl;
+  cout << "  -o --output    output filename (default: \"out.txt\")" << endl;
+  cout << "  -f --factor    factor (default: 3.14)" << endl;
   exit(1);
 }
 
 void help()
 {
-  std::cout << "Dies ist ein Programm, welches nur zum Testen des Programmes"<< endl;
-  std::cout << "AppGen dient. Es erfüllt sonst quasi keinen Zweck."<< endl;
-  std::cout << "üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü"<< endl;
-  std::cout << "Bitte teste ganz genau!"<< endl;
+  std::cout << "This is arbitrary text which is written, if"<< endl;
+  std::cout << "the program is called with option '-H'"<< endl;
+  std::cout << "Aller Anfang ist schwer"<< endl;
+  std::cout << "test test test test"<< endl;
   exit(1);
 }
 void error(const string &msg)
@@ -120,8 +117,8 @@ int ysize = 600;
 char character = 'b';
 string ofn = "out.txt";
 double fac = 3.14;
-string source = "nothing";
-string dest = "nothing";
+string source = "";
+string target = "";
 std::vector<std::string> files;
   static struct option ag_long_options[] =
   {
@@ -186,10 +183,10 @@ std::vector<std::string> files;
     }
   if (optind < argc)
     source = argv[optind++];
-  else error("Parameter quelle needed");
+  else error("Parameter source needed");
 
   if (optind < argc)
-    dest = argv[optind++];
+    target = argv[optind++];
 
   if (optind < argc)
     FileList(argc, argv, optind, files, false);
@@ -203,14 +200,13 @@ std::vector<std::string> files;
   std::cout << "ofn: " << ofn << std::endl;
   std::cout << "fac: " << fac << std::endl;
   std::cout << "source: " << source << std::endl;
-  std::cout << "dest: " << dest << std::endl;
+  std::cout << "target: " << target << std::endl;
   std::cout << "files: (" << files.size() << ")" << std::endl;
   for (unsigned int i=0;i<files.size();i++)
     std::cout << "files[" << i << "]" << ": " << files[i] << std::endl; 
 
 /*AppGen:MainEnd*/
-// Diese Zeile muss nach Anwendung von AppGen direkt nach dem Ende
-// des generierten Teiles stehen
+// This line must be directly after the generated code
 
 #if 0
   cout << "xsize: " << xsize << endl;
