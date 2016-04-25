@@ -26,22 +26,43 @@ std::string Option::getUsage(int space, int maxlen) const
   os << "  cout << \"";
   for (int i = 0; i < space; i++)
     os << " ";
-  std::string formattedLongOption = longOption;
-  while ((int)formattedLongOption.size() < maxlen)
+
+  std::string formattedShortOption = std::string("-") + shortOption;
+  while ((int)formattedShortOption.size() < maxlen + 2)
+    formattedShortOption += " ";
+
+  std::string formattedLongOption = std::string("--") + longOption;
+  while ((int)formattedLongOption.size() < maxlen + 2)
     formattedLongOption += " ";
-  os << "-" << shortOption << " --" << formattedLongOption << "  ";
+
+  std::string parameter = "   ";
+  if (type == "int") parameter = "<i>";
+  else if (type == "double") parameter = "<d>";
+  else if (type == "string") parameter = "<s>";
+  else if (type == "bool") parameter = "<b>";
+  else if (type == "char") parameter = "<c>";
+
+  os << "-" << shortOption << " " << parameter << "    ";
+  os << formattedLongOption << " " << parameter;
+  os << "\" << endl;" << std::endl;
+
+  os << "  cout << \"   ";
+  for (int i = 0; i < space; i++)
+    os << " ";
+
   os << var->getDescription(0);
   std::string def = var->getDefault();
   if (!def.empty())
     os << " (default: " << CEscape(def) << ")";
-  os << "\" << endl;";
+  os << "\" << endl;" << std::endl;
 
+  // write code for extended description <opt2>
   int dlines = var->getDescriptionSize();
   for (int i = 1; i < dlines; i++)
     {
       os << std::endl;
       os << "  cout << \"";
-      for (int k = 0; k < space + maxlen + 7; k++)
+      for (int k = 0; k < space + 3; k++)
         os << " ";
       os << var->getDescription(i);
       os << "\" << endl;";
