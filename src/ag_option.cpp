@@ -27,13 +27,11 @@ std::string Option::getUsage(int space, int maxlen) const
   for (int i = 0; i < space; i++)
     os << " ";
 
-  std::string formattedShortOption = std::string("-") + shortOption;
-  while ((int)formattedShortOption.size() < maxlen + 2)
-    formattedShortOption += " ";
-
+  /*
   std::string formattedLongOption = std::string("--") + longOption;
   while ((int)formattedLongOption.size() < maxlen + 2)
     formattedLongOption += " ";
+  */
 
   std::string parameter = "   ";
   if (type == "int") parameter = "<i>";
@@ -43,7 +41,7 @@ std::string Option::getUsage(int space, int maxlen) const
   else if (type == "char") parameter = "<c>";
 
   os << "-" << shortOption << " " << parameter << "    ";
-  os << formattedLongOption << " " << parameter;
+  os << "--" << longOption << "=" << parameter;
   os << "\" << endl;" << std::endl;
 
   os << "  cout << \"   ";
