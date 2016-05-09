@@ -41,7 +41,9 @@ std::string Option::getUsage(int space, int maxlen) const
   else if (type == "char") parameter = "<c>";
 
   os << "-" << shortOption << " " << parameter << "    ";
-  os << "--" << longOption << "=" << parameter;
+  os << "--" << longOption;
+  if (parameter!="   ")
+    os << "=" << parameter;
   os << "\" << endl;" << std::endl;
 
   os << "  cout << \"   ";
