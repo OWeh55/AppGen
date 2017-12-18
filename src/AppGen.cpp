@@ -1,6 +1,7 @@
 /*
-  this is a tool to generate parts of a commandline program for
-  parameter handling and help
+  this is a tool to generate code for
+  handling of commandline parameters
+  and options
 */
 
 #include <iostream>
@@ -39,7 +40,7 @@ vector<Option*> optionDesc;
 set<char> optionLetter;
 vector<string> longHelp;
 
-bool ReadSource(const string& fn)
+bool readSource(const string& fn)
 {
   const int st_pre = 1;  // reading before parameter description
   const int st_desc = 2; // reading parameter description
@@ -56,6 +57,7 @@ bool ReadSource(const string& fn)
     }
 
   string line;
+  // linewise read
   while (state == st_pre && getline(is, line))
     {
       source.push_back(line);
@@ -72,8 +74,10 @@ bool ReadSource(const string& fn)
         endGlobal = source.size() - 1;
     }
 
+  // read within parameter description block
   while (state == st_desc && getline(is, line))
     {
+
       source.push_back(line);
       string hline = nextWord(line);
       if (!hline.empty())
@@ -361,7 +365,7 @@ void CreateGlobal(ostream& os, bool debug = false)
   os << APPGEN_GLOBALEND << endl;
 }
 
-bool WriteDest(const string& dest, const string& src, bool debug = false)
+bool writeDest(const string& dest, const string& src, bool debug = false)
 {
   ofstream os(dest.c_str());
   for (unsigned int i = 0; i < source.size(); i++)
@@ -417,7 +421,7 @@ int ptoi(const char* para)
   int res = strtol(para, &end, 10);
   if (end == para)
     error(string("no int: ") + para);
-  if (*end != 0)
+  if (*end != '\0')
     error(string("garbage in int: ") + para);
   return res;
 }
@@ -428,7 +432,7 @@ double ptod(const char* para)
   double res = strtod(para, &end);
   if (end == para)
     error(string("no double: ") + para);
-  if (*end != 0)
+  if (*end != '\0')
     error(string("garbage in double: ") + para);
   return res;
 }
@@ -448,6 +452,7 @@ int main(int argc, char** argv)
     {"no_line_number", no_argument, 0, 'l' },
     {0,         0,                 0,  0 }
   };
+
   ag_programName = argv[0];
   int rc;
   opterr = 0;
@@ -487,7 +492,7 @@ int main(int argc, char** argv)
 
   try
     {
-      if (ReadSource(source))
+      if (readSource(source))
         {
           if (verbose)
             {
@@ -504,6 +509,7 @@ int main(int argc, char** argv)
       // simple tests
       if (parameterDesc.size() == 0 && optionDesc.size() == 0)
         error("No parameter description");
+
       if (startMain < 0)
         error("No insertion point for main() found (" APPGEN_MAIN ")");
 
@@ -525,7 +531,7 @@ int main(int argc, char** argv)
       if (endMain >= 0 && endMain < startMain)
         error(APPGEN_MAINEND " before " APPGEN_MAIN);
 
-      if (!WriteDest(dest, source, debug))
+      if (!writeDest(dest, source, debug))
         error("Cannot write " + dest);
 
     }

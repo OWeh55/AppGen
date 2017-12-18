@@ -12,19 +12,23 @@ string tolower(const string& s)
 
 string trim(const string& s)
 {
+  // set first after leading spaces
   unsigned int first = 0;
   while (first < s.length() && s[first] == ' ')
     first++;
   if (first == s.length()) // only spaces
     return "";
+  // set last before trailing spaces
   unsigned int last = s.length() - 1;
   while (last > first && s[last] == ' ')
     last--;
+  // return substring first..last
   return s.substr(first, last - first + 1);
 }
 
 string trimLeft(const string& s)
 {
+  // remove leading spaces
   unsigned int first = 0;
   while (first < s.length() && s[first] == ' ')
     first++;
@@ -35,6 +39,7 @@ string trimLeft(const string& s)
 
 string trimRight(const string& s)
 {
+  // remove trailing spaces
   int last = s.length() - 1;
   while (last > 0 && s[last] == ' ')
     last--;
@@ -43,7 +48,7 @@ string trimRight(const string& s)
 
 string nextWord(string& s)
 {
-  string res;
+  string res = "";
   unsigned int first = 0;
   while (first < s.length() && s[first] == ' ')
     first++;
@@ -116,6 +121,7 @@ string getkind(string& s)
 
 string CEscape(const string& s)
 {
+  // escape string for use as c string
   string res;
   for (unsigned int i = 0; i < s.length(); i++)
     {

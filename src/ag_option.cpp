@@ -42,7 +42,7 @@ std::string Option::getUsage(int space, int maxlen) const
 
   os << "-" << shortOption << " " << parameter << "    ";
   os << "--" << longOption;
-  if (parameter!="   ")
+  if (parameter != "   ")
     os << "=" << parameter;
   os << "\" << endl;" << std::endl;
 

@@ -26,12 +26,11 @@ using namespace std;
   % short option, long option, type, name of variable, description, default
   opt: h, help,   usage,   ,    Help
   opt: H, longhelp,   Usage,   ,  Verbose help
-: This is arbitrary text which is written, if
-: the program is called with option '-H'
-: Aller Anfang ist schwer
-: test test test test
+: This is the text written by the long help option '-H'
+: The quick brown fox jumps over the lazy dog
+: Falsches Üben von Xylophonmusik quält jeden größeren Zwerg
   opt: x, xsize,  int,     xsize,    Size X,  800
-  opt2: More about size
+  opt2: size is given in pixels
   opt: y, ysize,  int,     ysize,    Size Y,  600
   opt: c, char, char, character, one character, 'b'
   opt: v, verbose,  Void,   verbose,  Be verbose,  false

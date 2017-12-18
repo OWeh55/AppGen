@@ -1,3 +1,5 @@
 *.o
 *.orig
 depend
+src/agtest
+src/AppGen
