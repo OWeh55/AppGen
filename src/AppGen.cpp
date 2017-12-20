@@ -207,7 +207,7 @@ string padded(const string& s, unsigned int len)
   return '\"' + res + '\"';
 }
 
-void createUsage(ostream& os, bool debug = false)
+void createUsage(ostream& os)
 {
   os << "void usage()" << endl;
   os << "{" << endl;
@@ -278,7 +278,7 @@ void createUsage(ostream& os, bool debug = false)
   os << "}" << endl << endl;
 }
 
-void createHelp(ostream& os, bool debug = false)
+void createHelp(ostream& os)
 {
   if (!longHelp.empty())
     {
@@ -292,7 +292,7 @@ void createHelp(ostream& os, bool debug = false)
     }
 }
 
-void createError(ostream& os, bool debug = false)
+void createError(ostream& os)
 {
   os << "void error(const string &msg)" << endl;
   os << "{" << endl;
@@ -301,7 +301,7 @@ void createError(ostream& os, bool debug = false)
   os << "}" << endl << endl;
 }
 
-void writeptol(ostream& os, bool debug = false)
+void writeptol(ostream& os)
 {
   os << "long int ptol(const char *para)" << endl;
   os << "{" << endl;
@@ -315,7 +315,7 @@ void writeptol(ostream& os, bool debug = false)
   os << "}" << endl << endl;
 }
 
-void writeptod(ostream& os, bool debug = false)
+void writeptod(ostream& os)
 {
   os << "double ptod(const char *para)" << endl;
   os << "{" << endl;
@@ -333,15 +333,15 @@ void createMain(ostream& os, bool debug = false)
 {
   os << "string ag_programName;" << endl << endl;
 
-  createUsage(os, debug);
-  createHelp(os, debug);
-  createError(os, debug);
+  createUsage(os);
+  createHelp(os);
+  createError(os);
 
   if (hasIntPara)
-    writeptol(os, debug);
+    writeptol(os);
 
   if (hasDoublePara)
-    writeptod(os, debug);
+    writeptod(os);
 
   os << "int main(int argc, char **argv)" << endl;
   os << "{" << endl;
@@ -471,8 +471,8 @@ void usage()
   cout << ag_programName << " - application program generator" << endl;
   cout << "usage: " << endl;
   cout << ag_programName << " [<options>] source target " << endl;
-  cout << "  source - C++ source file with parameter/option description" << endl;
-  cout << "  target - C++ file to generate" << endl;
+  cout << "  source - c++ source file with parameter/option description" << endl;
+  cout << "  target - file to generate" << endl;
   cout << "options:" << endl;
   cout << "  -h --help     this help" << endl;
   cout << "  -v --verbose  verbose messages (default: false)" << endl;

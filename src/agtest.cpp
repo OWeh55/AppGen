@@ -1,7 +1,7 @@
 /*
   this is a test for AppGen
 */
-
+#include <cmath>
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -13,7 +13,7 @@ using namespace std;
 /*AppGen
   %%  description of program
   prog: simple test for AppGen
-
+  
   %% description of parameters
   % name, kind, c++ type , name of variable, description, default
   para: source, required, string, source, source filename, ""
@@ -24,7 +24,7 @@ using namespace std;
 
   %% description of options
   % short option, long option, type, name of variable, description, default
-  opt: h, help,   usage,   ,    Help
+  opt: h, help,   usage,   , Help
   opt: H, longhelp,   Usage,   ,  Verbose help
 : This is the text written by the long help option '-H'
 : The quick brown fox jumps over the lazy dog
@@ -36,14 +36,14 @@ using namespace std;
   opt: v, verbose,  Void,   verbose,  Be verbose,  false
   opt: o, outputfilename,  string, ofn, output filename, outfile.txt
   opt2: this is a looong option
-  opt: f, factor, double,   fac,  factor, 3.14
+  opt: f, factor, double,   fac,  factor, M_PI
 AppGen*/
 
 /*AppGen:Main*/
 int main()
 {
   /*AppGen:MainEnd*/
-// This line must be directly after the generated code
+// This line must appear directly after the generated code
 
 #if 0
   cout << "xsize: " << xsize << endl;
