@@ -39,6 +39,8 @@ vector<Parameter*> parameterDesc;
 vector<Option*> optionDesc;
 set<char> optionLetter;
 vector<string> longHelp;
+bool hasIntPara = false;
+bool hasDoublePara = false;
 
 bool readSource(const string& fn)
 {
@@ -97,6 +99,11 @@ bool readSource(const string& fn)
               if (optionLetter.count(so) > 0)
                 throw "short option character already used";
               optionLetter.insert(so);
+              string type = optionDesc.back()->getType();
+              if (type == "int")
+                hasIntPara = true;
+              if (type == "double")
+                hasDoublePara = true;
             }
           else if (hline == "opt2:")
             {
@@ -192,9 +199,16 @@ void reformatLongHelp()
 }
 */
 
-void CreateMain(ostream& os, bool debug = false)
+string padded(const string& s, unsigned int len)
 {
-  os << "string ag_programName;" << endl << endl;
+  string res = s;
+  while (res.length() < len)
+    res += " ";
+  return '\"' + res + '\"';
+}
+
+void createUsage(ostream& os, bool debug = false)
+{
   os << "void usage()" << endl;
   os << "{" << endl;
   os << "  cout << ag_programName";
@@ -220,19 +234,52 @@ void CreateMain(ostream& os, bool debug = false)
 
   os << "  cout << \"Options:\" << endl;" << endl;
 
-  maxlen = 0;
-  for (unsigned int i = 0; i < optionDesc.size(); i++)
-    {
-      int alen = optionDesc[i]->getLongOption().length();
-      if (alen > maxlen)
-        maxlen = alen;
-    }
+  unsigned int solen = 0;
+  unsigned int lolen = 0;
+  unsigned int d0len = 0;
 
   for (unsigned int i = 0; i < optionDesc.size(); i++)
-    os << optionDesc[i]->getUsage(2, maxlen) << endl;
+    {
+      string so;
+      string lo;
+      vector<string> desc;
+      optionDesc[i]->getUsage(so, lo, desc);
+      if (so.length() > solen) solen = so.length();
+      if (lo.length() > lolen) lolen = lo.length();
+      if (desc[0].length() > d0len) d0len = desc[0].length();
+    }
+
+  if (lolen > 12)
+    lolen = 12;
+
+  int dpos = solen + lolen + 2 + 3;
+
+  for (unsigned int i = 0; i < optionDesc.size(); i++)
+    {
+      string so;
+      string lo;
+      vector<string> desc;
+      optionDesc[i]->getUsage(so, lo, desc);
+      os << "  cout << " << padded(so, solen) << " << " << padded("", 2);
+      os << " << " << padded(lo, lolen) << " << " << padded("", 3) << ";";
+      if (lo.length() > lolen) // extra long option -> description on new line
+        os << endl << "cout << endl << " << padded("", (dpos)) << "; ";
+      os << endl << "  cout << \"" << desc[0] << "\"";
+      os << " << endl ; " << endl;
+      for (unsigned int i = 1; i < desc.size(); i++)
+        {
+          os << "  cout << " << padded("", dpos);
+          os << " << " << padded(desc[i], 0);
+          os << " << endl; " << endl;
+        }
+    }
 
   os << "  exit(1);" << endl;
   os << "}" << endl << endl;
+}
+
+void createHelp(ostream& os, bool debug = false)
+{
   if (!longHelp.empty())
     {
       //    reformatLongHelp();
@@ -243,23 +290,33 @@ void CreateMain(ostream& os, bool debug = false)
       os << "  exit(1);" << endl;
       os << "}" << endl;
     }
+}
+
+void createError(ostream& os, bool debug = false)
+{
   os << "void error(const string &msg)" << endl;
   os << "{" << endl;
   os << "  cout << endl << ag_programName << \" - error: \" << msg << endl << endl;" << endl;
   os << "  usage();" << endl;
   os << "}" << endl << endl;
+}
 
-  os << "int ptoi(const char *para)" << endl;
+void writeptol(ostream& os, bool debug = false)
+{
+  os << "long int ptol(const char *para)" << endl;
   os << "{" << endl;
   os << "  char *end;" << endl;
-  os << "  int res = strtol(para, &end, 10);" << endl;
+  os << "  long int res = strtol(para, &end, 10);" << endl;
   os << "  if (end == para)" << endl;
   os << "    error(string(\"no int: \") + para);" << endl;
   os << "  if (*end != 0)" << endl;
-  os << "    error(string(\"garbage in int: \") + para);" << endl;
+  os << "    error(string(\"garbage in integer value: \") + para);" << endl;
   os << "  return res;" << endl;
   os << "}" << endl << endl;
+}
 
+void writeptod(ostream& os, bool debug = false)
+{
   os << "double ptod(const char *para)" << endl;
   os << "{" << endl;
   os << "  char *end;" << endl;
@@ -267,9 +324,24 @@ void CreateMain(ostream& os, bool debug = false)
   os << "  if (end == para)" << endl;
   os << "    error(string(\"no double: \") + para);" << endl;
   os << "  if (*end != 0)" << endl;
-  os << "    error(string(\"garbage in double: \") + para);" << endl;
+  os << "    error(string(\"garbage in floating point value: \") + para);" << endl;
   os << "  return res;" << endl;
   os << "}" << endl << endl;
+}
+
+void createMain(ostream& os, bool debug = false)
+{
+  os << "string ag_programName;" << endl << endl;
+
+  createUsage(os, debug);
+  createHelp(os, debug);
+  createError(os, debug);
+
+  if (hasIntPara)
+    writeptol(os, debug);
+
+  if (hasDoublePara)
+    writeptod(os, debug);
 
   os << "int main(int argc, char **argv)" << endl;
   os << "{" << endl;
@@ -337,11 +409,14 @@ void CreateMain(ostream& os, bool debug = false)
   os << APPGEN_MAINEND << endl;
 }
 
-void CreateGlobal(ostream& os, bool debug = false)
+void createGlobal(ostream& os, bool debug = false)
 {
   // collect includes
   vector<string> includes;
   includes.push_back("<getopt.h>");
+  includes.push_back("<string>");
+  includes.push_back("<iomanip>");
+
   for (unsigned int i = 0; i < optionDesc.size(); i++)
     optionDesc[i]->neededIncludes(includes);
   for (unsigned int i = 0; i < parameterDesc.size(); i++)
@@ -375,13 +450,13 @@ bool writeDest(const string& dest, const string& src, bool debug = false)
       os << source[i] << endl;
       if (source[i] == APPGEN_MAIN)
         {
-          CreateMain(os, debug);
+          createMain(os, debug);
           if (endMain >= 0)
             i = endMain;
         }
       else if (source[i] == APPGEN_GLOBAL)
         {
-          CreateGlobal(os, debug);
+          createGlobal(os, debug);
           if (endGlobal >= 0)
             i = endGlobal;
         }

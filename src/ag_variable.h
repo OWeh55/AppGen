@@ -115,7 +115,7 @@ public:
 
   virtual std::string getCase() const
   {
-    return variable + " = ptoi(optarg);";
+    return variable + " = ptol(optarg);";
   }
 
   virtual std::string getType() const

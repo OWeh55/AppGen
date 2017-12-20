@@ -20,6 +20,36 @@ Option::operator std::string() const
   return res;
 }
 
+void Option::getUsage(std::string& shortOptionString,
+                      std::string& longOptionString,
+                      std::vector<std::string>& description) const
+{
+  std::string parameter = "   ";
+  if (type == "int") parameter = "<i>";
+  else if (type == "double") parameter = "<d>";
+  else if (type == "string") parameter = "<s>";
+  else if (type == "bool") parameter = "<b>";
+  else if (type == "char") parameter = "<c>";
+
+  shortOptionString = std::string("-") + shortOption + " " + parameter;
+
+  longOptionString = "--" + longOption;
+  if (parameter != "   ")
+    longOptionString += "=" + parameter;
+
+  std::string desc = var->getDescription(0);
+  std::string def = var->getDefault();
+  if (!def.empty())
+    desc += " (default: " + CEscape(def) + ")";
+
+  description.clear();
+  description.push_back(desc);
+
+  int dlines = var->getDescriptionSize();
+  for (int i = 1; i < dlines; i++)
+    description.push_back(var->getDescription(i));
+}
+
 std::string Option::getUsage(int space, int maxlen) const
 {
   std::ostringstream os;

@@ -115,6 +115,10 @@ public:
     var->addDescription(d);
   }
 
+  virtual void getUsage(std::string& shortOptionString,
+                        std::string& longOptionString,
+                        std::vector<std::string>& description) const;
+
   virtual std::string getUsage(int space = 2, int maxlen = 0) const;
 
   virtual std::string getLongOptionStruct() const ;

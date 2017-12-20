@@ -34,7 +34,8 @@ using namespace std;
   opt: y, ysize,  int,     ysize,    Size Y,  600
   opt: c, char, char, character, one character, 'b'
   opt: v, verbose,  Void,   verbose,  Be verbose,  false
-  opt: o, output,  string,  ofn,  output filename, out.txt
+  opt: o, outputfilename,  string, ofn, output filename, outfile.txt
+  opt2: this is a looong option
   opt: f, factor, double,   fac,  factor, 3.14
 AppGen*/
 
