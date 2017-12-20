@@ -13,7 +13,7 @@ using namespace std;
 /*AppGen
   %%  description of program
   prog: simple test for AppGen
-  
+
   %% description of parameters
   % name, kind, c++ type , name of variable, description, default
   para: source, required, string, source, source filename, ""
