@@ -466,6 +466,34 @@ bool writeDest(const string& dest, const string& src, bool debug = false)
 
 string ag_programName;
 
+void syntaxHelp()
+{
+  cout << ag_programName << " - application program generator" << endl;
+  cout << "Entries in program source:" << endl;
+  cout << "/*AppGen:Global*/   - place to add globals and includes" << endl;
+  cout << "/*AppGen" << endl;
+  cout << "  AppGen*/" << endl;
+  cout << "                   - Description of parameters and options (syntax see below)" << endl;
+  cout << "/*AppGen:Main*/    - place to insert main() and parameter handling" << endl;
+  cout << "/*AppGen:MainEnd*/ - if inserted after AppGen:Main all lines between" << endl;
+  cout << "                     these markers are ignored" << endl;
+  cout << "                     you may insert \"int main()\" here to keep your" << endl;
+  cout << "                     editor happy" << endl;
+  cout << "Syntax: " << endl;
+  cout << "Program description:" << endl;
+  cout << "   %%  this line is a comment " << endl;
+  cout << "   prog: first test - brief description of program" << endl;
+  cout << "Parameter description" << endl;
+  cout << "   %% name, required/optional, c++ type , name of variable, description, default" << endl;
+  cout << "   para: source, required, string, source, source filename, \"\" " << endl;
+  cout << "   para2: extended description of parameter (optional) " << endl;
+  cout << "Option description:" << endl;
+  cout << "   % short option, long option, type, name of variable, description, default" << endl;
+  cout << "   opt:         x,       xsize,  int,            xsize, Size X,  800" << endl;
+  cout << "   opt2: additional explanation" << endl;
+  exit(1);
+}
+
 void usage()
 {
   cout << ag_programName << " - application program generator" << endl;
@@ -475,6 +503,7 @@ void usage()
   cout << "  target - file to generate" << endl;
   cout << "options:" << endl;
   cout << "  -h --help     this help" << endl;
+  cout << "  -H --syntax   help for syntax" << endl;
   cout << "  -v --verbose  verbose messages (default: false)" << endl;
   cout << "  -d --debug    created application outputs parameters (default: false)" << endl;
   cout << "  -l --no_line_number  No line numbers in created C++ code" << endl;
@@ -521,7 +550,8 @@ int main(int argc, char** argv)
   string dest = "<<";
   static struct option ag_long_options[] =
   {
-    {"help", required_argument, 0, 'h' },
+    {"help", no_argument, 0, 'h' },
+    {"syntax", no_argument, 0, 'H' },
     {"verbose", no_argument, 0, 'v' },
     {"debug", no_argument, 0, 'd' },
     {"no_line_number", no_argument, 0, 'l' },
@@ -531,7 +561,7 @@ int main(int argc, char** argv)
   ag_programName = argv[0];
   int rc;
   opterr = 0;
-  while ((rc = getopt_long(argc, argv, ":h:vdl", ag_long_options, NULL)) >= 0)
+  while ((rc = getopt_long(argc, argv, ":hHvdl", ag_long_options, NULL)) >= 0)
     {
       switch (rc)
         {
@@ -542,6 +572,10 @@ int main(int argc, char** argv)
           error("Expecting option parameter");
           break;
         case 'h':
+          usage();
+          break;
+        case 'H':
+          syntaxHelp();
           break;
         case 'v':
           verbose = true;
