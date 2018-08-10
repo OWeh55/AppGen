@@ -350,14 +350,14 @@ void createMain(ostream& os, bool debug = false)
   for (unsigned int i = 0; i < optionDesc.size(); i++)
     {
       if (! optionDesc[i]->isGlobal())
-        os << optionDesc[i]->getDefinition() << endl;
+        os << "  " << optionDesc[i]->getDefinition() << endl;
     }
 
   // variables for parameter values
   for (unsigned int i = 0; i < parameterDesc.size(); i++)
     {
       if (! parameterDesc[i]->isGlobal())
-        os << parameterDesc[i]->getDefinition() << endl;
+        os << "  " << parameterDesc[i]->getDefinition() << endl;
     }
 
   os << "  static struct option ag_long_options[] =" << endl;

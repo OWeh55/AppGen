@@ -296,8 +296,8 @@ public:
   virtual std::string getEvalPara() const
   {
     std::ostringstream os;
-    os << "while (optind<argc)" << std::endl;
-    os << "   " << variable << ".push_back(argv[optind++]);" << std::endl;
+    os << "while (optind < argc)" << std::endl;
+    os << "  " << variable << ".push_back(argv[optind++]);" << std::endl;
     return os.str();
   }
 

@@ -127,8 +127,8 @@ std::string Option::getCase() const
 {
   std::ostringstream os;
   os << "        case '" << shortOption << "':" << std::endl;
-  os << "              " << var->getCase() << std::endl;
-  os << "              break;" << std::endl;
+  os << "          " << var->getCase() << std::endl;
+  os << "          break;" << std::endl;
   return os.str();
 }
 
