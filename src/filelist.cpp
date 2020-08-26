@@ -13,8 +13,8 @@ std::string PathAndFilename(const std::string& path, const std::string& filename
   return result;
 }
 
-void FileList(const std::string& fn, 
-	      std::vector<std::string>& file, bool recursive)
+void FileList(const std::string& fn,
+              std::vector<std::string>& file, bool recursive)
 {
   struct stat fileStatus;
   if (stat(fn.c_str(), &fileStatus) != 0)

@@ -1,7 +1,6 @@
 /*
-  this is a tool to generate code for
-  handling of commandline parameters
-  and options
+  this is a tool to generate c++ code for the
+  handling of commandline parameters and options
 */
 
 #include <iostream>
@@ -199,12 +198,18 @@ void reformatLongHelp()
 }
 */
 
-string padded(const string& s, unsigned int len)
+void updateMax(unsigned int& var, unsigned int val)
 {
-  string res = s;
-  while (res.length() < len)
-    res += " ";
-  return '\"' + res + '\"';
+  if (val > var)
+    var = val;
+}
+
+string padded(string s, unsigned int len)
+// padded string literal in source code (with ")
+{
+  while (s.length() < len)
+    s += " ";
+  return '\"' + s + '\"';
 }
 
 void createUsage(ostream& os)
@@ -221,12 +226,11 @@ void createUsage(ostream& os)
     os << parameterDesc[i]->getExtendedName() << " ";
   os << "\" << endl;" << endl;
 
-  int maxlen = 0;
+  unsigned int maxlen = 0;
   for (unsigned int i = 0; i < parameterDesc.size(); i++)
     {
-      int alen = parameterDesc[i]->getName().length();
-      if (alen > maxlen)
-        maxlen = alen;
+      unsigned int alen = parameterDesc[i]->getName().length();
+      updateMax(maxlen, alen);
     }
 
   for (unsigned int i = 0; i < parameterDesc.size(); i++)
@@ -234,41 +238,41 @@ void createUsage(ostream& os)
 
   os << "  cout << \"Options:\" << endl;" << endl;
 
-  unsigned int solen = 0;
-  unsigned int lolen = 0;
+  unsigned int shortOptionLength = 0;
+  unsigned int longOptionLength = 0;
   unsigned int d0len = 0;
 
   for (unsigned int i = 0; i < optionDesc.size(); i++)
     {
-      string so;
-      string lo;
+      string shortOption;
+      string longOption;
       vector<string> desc;
-      optionDesc[i]->getUsage(so, lo, desc);
-      if (so.length() > solen) solen = so.length();
-      if (lo.length() > lolen) lolen = lo.length();
-      if (desc[0].length() > d0len) d0len = desc[0].length();
+      optionDesc[i]->getUsage(shortOption, longOption, desc);
+      updateMax(shortOptionLength, shortOption.length());
+      updateMax(longOptionLength, longOption.length());
+      updateMax(d0len, desc[0].length());
     }
 
-  if (lolen > 12)
-    lolen = 12;
+  if (longOptionLength > 15)
+    longOptionLength = 15;
 
-  int dpos = solen + lolen + 2 + 3;
+  int descriptionPosition = shortOptionLength + longOptionLength + 2 + 3;
 
   for (unsigned int i = 0; i < optionDesc.size(); i++)
     {
-      string so;
-      string lo;
+      string shortOption;
+      string longOption;
       vector<string> desc;
-      optionDesc[i]->getUsage(so, lo, desc);
-      os << "  cout << " << padded(so, solen) << " << " << padded("", 2);
-      os << " << " << padded(lo, lolen) << " << " << padded("", 3) << ";";
-      if (lo.length() > lolen) // extra long option -> description on new line
-        os << endl << "cout << endl << " << padded("", (dpos)) << "; ";
+      optionDesc[i]->getUsage(shortOption, longOption, desc);
+      os << "  cout << " << padded(shortOption, shortOptionLength) << " << " << padded("", 2);
+      os << " << " << padded(longOption, longOptionLength) << " << " << padded("", 3) << ";";
+      if (longOption.length() > longOptionLength) // extra long option -> description on new line
+        os << endl << "cout << endl << " << padded("", (descriptionPosition)) << "; ";
       os << endl << "  cout << \"" << desc[0] << "\"";
       os << " << endl ; " << endl;
-      for (unsigned int i = 1; i < desc.size(); i++)
+      for (unsigned int i = 1; i < desc.size(); i++) // further lines of description
         {
-          os << "  cout << " << padded("", dpos);
+          os << "  cout << " << padded("", descriptionPosition);
           os << " << " << padded(desc[i], 0);
           os << " << endl; " << endl;
         }
