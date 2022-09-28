@@ -490,11 +490,11 @@ void syntaxHelp()
   cout << "Parameter description" << endl;
   cout << "   %% name, required/optional, c++ type , name of variable, description, default" << endl;
   cout << "   para: source, required, string, source, source filename, \"\" " << endl;
-  cout << "   para2: extended description of parameter (optional) " << endl;
+  cout << "   para2: extended description of parameter for help (optional) " << endl;
   cout << "Option description:" << endl;
-  cout << "   % short option, long option, type, name of variable, description, default" << endl;
+  cout << "   %% short option, long option, type, name of variable, description, default" << endl;
   cout << "   opt:         x,       xsize,  int,            xsize, Size X,  800" << endl;
-  cout << "   opt2: additional explanation" << endl;
+  cout << "   opt2: extended description of option for help (optional)" << endl;
   exit(1);
 }
 
@@ -509,7 +509,8 @@ void usage()
   cout << "  -h --help     this help" << endl;
   cout << "  -H --syntax   help for syntax" << endl;
   cout << "  -v --verbose  verbose messages (default: false)" << endl;
-  cout << "  -d --debug    created application outputs parameters (default: false)" << endl;
+  cout << "  -d --debug    debug outputs for parameters (default: false)" << endl;
+  cout << "                created application prints parameters and options to stdout" << endl;
   cout << "  -l --no_line_number  No line numbers in created C++ code" << endl;
   exit(1);
 }
