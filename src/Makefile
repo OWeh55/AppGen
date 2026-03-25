@@ -14,7 +14,7 @@ LIBS=
 # source code beautifier
 ASTYLE := astyle
 # format options for beautifier
-ASTYLE_OPT = --style=gnu --unpad-paren --pad-header --pad-oper --indent-namespaces --indent=spaces=2 --convert-tabs --align-pointer=type --align-reference=type --remove-brackets
+ASTYLE_OPT = --style=gnu --unpad-paren --pad-header --pad-oper --indent-namespaces --indent=spaces=2 --convert-tabs --align-pointer=type --align-reference=type
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $*.c

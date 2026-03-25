@@ -1,7 +1,7 @@
-/*
-  this is a tool to generate c++ code for the
-  handling of commandline parameters and options
-*/
+/**
+ * this is a tool to generate c++ code for the
+ * handling of commandline parameters and options
+ */
 
 #include <iostream>
 #include <fstream>
@@ -639,7 +639,7 @@ int main(int argc, char** argv)
         {
           if (parameterDesc[i]->getType() == "list" ||
               parameterDesc[i]->getType() == "filelist")
-            error("Lists have to be last parameters");
+            error("Lists must be last parameters");
         }
 
       if (endMain >= 0 && endMain < startMain)

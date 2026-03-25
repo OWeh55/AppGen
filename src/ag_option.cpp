@@ -134,7 +134,7 @@ std::string Option::getCase() const
 
 Parameter::Parameter(std::string line)
 {
-  //  para: #name:quelle, #art:required,#typ:string,#var: source, Quelldatei, nothing
+  // para: #name:quelle, #art:required,#typ:string,#var: source, Quelldatei, nothing
   name = getword(line);
   std::string aval = getkind(line);
   optional = aval != "required";

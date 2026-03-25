@@ -9,7 +9,6 @@
 
 class Variable
 {
-
 public:
   Variable(std::string& line, bool isGlobal)
   {
