@@ -96,7 +96,7 @@ bool readSource(const string& fn)
               optionDesc.push_back(new Option(line));
               char so = optionDesc.back()->getShortOption();
               if (optionLetter.count(so) > 0)
-                throw "short option character already used";
+                throw "short option character already in use";
               optionLetter.insert(so);
               string type = optionDesc.back()->getType();
               if (type == "int")
@@ -509,7 +509,7 @@ void usage()
   cout << "  -h --help     this help" << endl;
   cout << "  -H --syntax   help for syntax" << endl;
   cout << "  -v --verbose  verbose messages (default: false)" << endl;
-  cout << "  -d --debug    debug outputs for parameters (default: false)" << endl;
+  cout << "  -d --debug    debug output for parameters (default: false)" << endl;
   cout << "                created application prints parameters and options to stdout" << endl;
   cout << "  -l --no_line_number  No line numbers in created C++ code" << endl;
   exit(1);
@@ -524,7 +524,7 @@ void error(const string& msg)
   usage();
 }
 
-int ptoi(const char* para)
+long int ptoi(const char* para)
 {
   char* end;
   int res = strtol(para, &end, 10);
