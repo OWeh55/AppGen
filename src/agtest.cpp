@@ -12,7 +12,7 @@ using namespace std;
 
 /*AppGen
   %%  description of program
-  prog: simple test for AppGen
+  prog: simple "simple" test for AppGen
 
   %% description of parameters
   % name, kind, c++ type , name of variable, description, default
@@ -33,7 +33,7 @@ using namespace std;
   opt2: size is given in pixels
   opt: y, ysize,  int,     ysize,    Size Y,  600
   opt: c, char, char, character, one character, 'b'
-  opt: v, verbose,  Void,   verbose,  Be verbose,  false
+  opt: v, verbose,  Void,   verbose,  Be verbose, false
   opt: o, outputfilename,  string, ofn, output filename, outfile.txt
   opt2: this is a looong option
   opt: f, factor, double,   fac,  factor, M_PI
@@ -43,7 +43,7 @@ AppGen*/
 int main()
 {
   /*AppGen:MainEnd*/
-// This line must appear directly after the generated code
+  // This line must appear directly after the generated code
 
 #if 0
   cout << "xsize: " << xsize << endl;

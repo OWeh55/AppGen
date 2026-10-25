@@ -46,7 +46,7 @@ dep:
 	$(CXX) -M $(COPT) $(INCLUDE) *.cpp >> depend	
 
 agtest: AppGen agtest.cpp
-	AppGen -l -d agtest.cpp agtest_out.cpp
+	AppGen -d agtest.cpp agtest_out.cpp
 	g++ agtest_out.cpp filelist.o -o agtest
 
 -include depend

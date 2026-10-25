@@ -4,14 +4,13 @@
  */
 
 #include <iostream>
+#include <cstdio>
 #include <fstream>
 #include <vector>
 #include <set>
 #include <string>
 #include <cstdlib>
 #include <getopt.h>
-
-#include <locale>
 
 #include "ag_parse.h"
 #include "ag_option.h"
@@ -90,7 +89,11 @@ bool readSource(const string& fn)
           else if (hline == "para:")
             parameterDesc.push_back(new Parameter(line));
           else if (hline == "para2:")
-            parameterDesc.back()->addDescription(trim(line));
+            {
+              if (parameterDesc.empty())
+                throw "para2: no previous para:";
+              parameterDesc.back()->addDescription(trim(line));
+            }
           else if (hline == "opt:")
             {
               optionDesc.push_back(new Option(line));
@@ -140,68 +143,53 @@ bool readSource(const string& fn)
 
 const int maxLineLength = 80;
 
-/*
-wstring S2WS(const string &s)
-{
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-  //  std::string narrow = converter.to_bytes(L"foo");
-  std::wstring wide = converter.from_bytes(s);
-
-  return ws;
-}
-
-string WS2S(const wstring &s)
-{
-  return string(s.begin(), s.end());
-}
-
-wstring getNextLine(const wstring &all,int &pos, int lng)
-{
-  wstring result;
-  for (int i=0;pos<(int)all.size() && i<lng;++i)
-    {
-      result += all[pos];
-      ++pos;
-    }
-  return result;
-}
-
-void reformatLongHelp()
-{
-  // long help -> one long line
-  wstring allHelp;
-  for (unsigned int i=0;i<longHelp.size();++i)
-    {
-      wstring thisLine= S2WS(longHelp[i]) + L" ";
-      allHelp += thisLine;
-    }
-  // truncate sequences of white space
-  wstring allHelp2;
-  bool blank=true;
-  for (unsigned int i=0;i<allHelp.size();++i)
-    {
-      if (blank && ! isblank(allHelp[i]))
-  {
-    blank=false;
-  }
-      if (!blank)
-  allHelp2 += allHelp[i];
-      blank = isblank(allHelp[i]);
-    }
-  longHelp.clear();
-  // split to multiple lines again
-  int currentPosition=0;
-  while (currentPosition<(int)allHelp2.size())
-    {
-      longHelp.push_back(WS2S(getNextLine(allHelp2,currentPosition,79)));
-    }
-}
-*/
-
 void updateMax(unsigned int& var, unsigned int val)
 {
   if (val > var)
     var = val;
+}
+
+string cppEscape(const string& s)
+{
+  string r;
+  r.reserve(s.size() + 8);
+  for (unsigned char c : s)
+    {
+      switch (c)
+        {
+        case '\\':
+          r += "\\\\";
+          break;
+        case '"':
+          r += "\\\"";
+          break;
+        case '\n':
+          r += "\\n";
+          break;
+        case '\r':
+          r += "\\r";
+          break;
+        case '\t':
+          r += "\\t";
+          break;
+        default:
+          if (c < 0x20 || c == 0x7f)
+            {
+              // sonstige Steuerzeichen als dreistellige Oktalzahl
+              char buf[5];
+              snprintf(buf, sizeof buf, "\\%03o", c);
+              r += buf;
+            }
+          else
+            r += c; // inkl. UTF-8-Bytes (>= 0x80) unverändert
+        }
+    }
+  return r;
+}
+
+string cppString(const string& s)
+{
+  return '"' + cppEscape(s) + '"';
 }
 
 string padded(string s, unsigned int len)
@@ -209,7 +197,7 @@ string padded(string s, unsigned int len)
 {
   while (s.length() < len)
     s += " ";
-  return '\"' + s + '\"';
+  return cppString(s);
 }
 
 void createUsage(ostream& os)
@@ -218,7 +206,7 @@ void createUsage(ostream& os)
   os << "{" << endl;
   os << "  cout << ag_programName";
   if (!programDesc.empty())
-    os << " << \" - " << programDesc << "\"" ;
+    os << " << \" - " << cppEscape(programDesc) << "\"" ;
   os << " << endl;" << endl;
   os << "  cout << \"Usage:\" << endl;" << endl;
   os << "  cout << ag_programName << \" [<options>] ";
@@ -268,12 +256,12 @@ void createUsage(ostream& os)
       os << " << " << padded(longOption, longOptionLength) << " << " << padded("", 3) << ";";
       if (longOption.length() > longOptionLength) // extra long option -> description on new line
         os << endl << "cout << endl << " << padded("", (descriptionPosition)) << "; ";
-      os << endl << "  cout << \"" << desc[0] << "\"";
+      os << endl << "  cout << " << cppString(desc[0]);
       os << " << endl ; " << endl;
       for (unsigned int i = 1; i < desc.size(); i++) // further lines of description
         {
           os << "  cout << " << padded("", descriptionPosition);
-          os << " << " << padded(desc[i], 0);
+          os << " << " << cppString(desc[i]);
           os << " << endl; " << endl;
         }
     }
@@ -286,11 +274,10 @@ void createHelp(ostream& os)
 {
   if (!longHelp.empty())
     {
-      //    reformatLongHelp();
       os << "void help()" << endl;
       os << "{" << endl;
       for (unsigned int i = 0; i < longHelp.size(); ++i)
-        os << "  std::cout << \"" << longHelp[i] << "\"<< endl;" << endl;
+        os << "  std::cout << " << cppString(longHelp[i]) << " << endl;" << endl;
       os << "  exit(1);" << endl;
       os << "}" << endl;
     }
@@ -446,23 +433,30 @@ void createGlobal(ostream& os, bool debug = false)
 
 bool writeDest(const string& dest, const string& src, bool debug = false)
 {
+  bool newLineNumber = false;
+
   ofstream os(dest.c_str());
   for (unsigned int i = 0; i < source.size(); i++)
     {
-      if (lineNumber)
-        os << "# " << (i + 1) << " \"" << src << "\"" << endl;
+      if (newLineNumber)
+        os << "#line " << (i + 1) << " " <<  cppString(src) << endl;
+      newLineNumber = false;
+
       os << source[i] << endl;
-      if (source[i] == APPGEN_MAIN)
+      string hline = nextWord(source[i]);
+      if (hline == APPGEN_MAIN)
         {
           createMain(os, debug);
           if (endMain >= 0)
             i = endMain;
+          newLineNumber = lineNumber;
         }
-      else if (source[i] == APPGEN_GLOBAL)
+      else if (hline == APPGEN_GLOBAL)
         {
           createGlobal(os, debug);
           if (endGlobal >= 0)
             i = endGlobal;
+          newLineNumber = lineNumber;
         }
     }
   return true;
@@ -524,7 +518,7 @@ void error(const string& msg)
   usage();
 }
 
-long int ptoi(const char* para)
+long int ptol(const char* para)
 {
   char* end;
   int res = strtol(para, &end, 10);
@@ -602,7 +596,7 @@ int main(int argc, char** argv)
 
   if (optind < argc)
     dest = argv[optind++];
-  else error("expection parameter target");
+  else error("expecting parameter target");
 
   try
     {
